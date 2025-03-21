@@ -1,0 +1,311 @@
+var textquestion = document.getElementById("pertanyaan");
+
+var person = [
+    {
+        "name": "Aditya",
+        "gender": "Laki-Laki",
+        "agama": "Hindu",
+        "fakta": ["Contoh objek", "Example"]
+    }
+];
+
+let dataGlobal;
+
+function prosesData(data) {
+    console.log("Data sudah siap:", data);
+    formatData();
+
+    pertanyaan1dan2();
+}
+
+function formatData() {
+    person = [];
+
+    for(let i = 0; i < dataGlobal.length; i++) {
+
+        var thefactka = [];
+
+        // Data yang dimasukkan ke dalam fakta
+        var faktaIsDead = dataGlobal[i].status.isDead;
+        var faktaKindergarten = dataGlobal[i].school.kindergarten;
+        var faktaElementaryschool = dataGlobal[i].school.elementaryschool;
+        var faktaJuniorhighschool = dataGlobal[i].school.juniorhighschool;
+        var faktaSeniorhighschool = dataGlobal[i].school.seniorhighschool;
+        var faktaNamalengkap = dataGlobal[i].name;
+        var faktaTempattanggallahir = dataGlobal[i].birthday;
+
+        if (faktaIsDead == false) {
+            thefactka.push("masih hidup");
+        } else {
+            thefactka.push("sudah meninggal dunia");
+        }
+
+        if (faktaTempattanggallahir != "" && faktaTempattanggallahir != null ) {
+            var tempatnyalahir = faktaTempattanggallahir.split(",")[0];
+            let tahunlahir = faktaTempattanggallahir.slice(-4);
+            let tahunlahirnyaadalahangka = /^\d{4}$/.test(tahunlahir);
+
+            // thefactka.push(`lahir di ${tempatnyalahir}`);
+
+            if (tahunlahirnyaadalahangka == true) {
+                thefactka.push(`lahir pada tahun ${tahunlahir}`);
+            }
+        }
+
+        if (faktaKindergarten != "" && faktaKindergarten != null ) {
+            thefactka.push(`pernah bersekolah di ${faktaKindergarten}`);
+        }
+
+        if (faktaElementaryschool != "" && faktaElementaryschool != null ) {
+            thefactka.push(`pernah bersekolah di ${faktaElementaryschool}`);
+        }
+
+        if (faktaJuniorhighschool != "" && faktaJuniorhighschool != null ) {
+            thefactka.push(`pernah bersekolah di ${faktaJuniorhighschool}`);
+        }
+
+        if (faktaSeniorhighschool != "" && faktaSeniorhighschool != null ) {
+            thefactka.push(`pernah bersekolah di ${faktaSeniorhighschool}`);
+        }
+
+        if (faktaNamalengkap.includes("Putu")) {
+            thefactka.push(`didalam namanya ada kata "Putu"`);
+        } else if (faktaNamalengkap.includes("Wayan")) {
+            thefactka.push(`didalam namanya ada kata "Wayan"`);
+        } else if (faktaNamalengkap.includes("Made")) {
+            thefactka.push(`didalam namanya ada kata "Made"`);
+        } else if (faktaNamalengkap.includes("Kadek")) {
+            thefactka.push(`didalam namanya ada kata "Kadek"`);
+        } else if (faktaNamalengkap.includes("Komang")) {
+            thefactka.push(`didalam namanya ada kata "Komang"`);
+        } else if (faktaNamalengkap.includes("Ketut")) {
+            thefactka.push(`didalam namanya ada kata "Ketut"`);
+        } else if (faktaNamalengkap.includes("Nyoman")) {
+            thefactka.push(`didalam namanya ada kata "Nyoman"`);
+        } else if (faktaNamalengkap.includes("Anak Agung")) {
+            thefactka.push(`didalam namanya ada kata "Anak Agung"`);
+        }
+
+        let hurufTerakhir = faktaNamalengkap.slice(-1);
+        thefactka.push(`huruf terakhir dari nama lengkapnya adalah "${hurufTerakhir}"`);
+
+        person.push({
+            "name": faktaNamalengkap,
+            "gender": dataGlobal[i].gender,
+            "agama": dataGlobal[i].religion,
+            "fakta": thefactka
+        });
+    }
+
+    console.log(person);
+}
+
+fetch("person.json")
+    .then(response => response.json())
+    .then(data => {
+        dataGlobal = data.people;
+        prosesData(dataGlobal);
+    })
+    .catch(error => console.error("Terjadi kesalahan:", error));
+
+
+const pertanyaan = {
+    "satudua": [
+        {
+            "pertanyaan": "Apakah dia perempuan?",
+            "id": "gender",
+            "value": "Perempuan"
+        },
+        {
+            "pertanyaan": "Apakah dia agama Hindu?",
+            "id": "agama",
+            "value": "Hindu"
+        }
+    ]
+};
+
+var pertanyaannowstring;
+var pertanyaan12id;
+var randompersonindex;
+var randompersondata;
+var tempdatatodelete = [];
+var pertanyaannowindex = 0;
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
+
+function pertanyaan1dan2() {
+    var randomIndex = getRandomInt(pertanyaan.satudua.length);
+    pertanyaan12id = randomIndex;
+    var pertanyaan1and2 = pertanyaan.satudua[randomIndex].pertanyaan;
+
+    pertanyaannowstring = pertanyaan1and2;
+
+    textquestion.textContent = pertanyaannowstring;
+
+    pertanyaannowindex += 1;
+    console.log(pertanyaannowstring);
+}
+
+function filterJawaban(jwb) {
+    if (findingPerson()) {
+        return;
+    } else {
+        if (pertanyaannowindex < 3) {
+
+            if (jwb === "y") {
+                console.log("Jawaban: Iya");
+                var idpersoninjson = pertanyaan.satudua[pertanyaan12id].id;
+                var valuepersoninjson = pertanyaan.satudua[pertanyaan12id].value;
+
+                for (let i = person.length - 1; i >= 0; i--) {
+                    var idnya = person[i][idpersoninjson];
+
+                    if (idnya != valuepersoninjson) {
+                        tempdatatodelete.push(i);
+                    }
+                }
+
+            } else {
+                console.log("Jawaban: Tidak");
+                var idpersoninjson = pertanyaan.satudua[pertanyaan12id].id;
+                var valuepersoninjson = pertanyaan.satudua[pertanyaan12id].value;
+
+                for (let i = person.length - 1; i >= 0; i--) {
+                    var idnya = person[i][idpersoninjson];
+
+                    if (idnya == valuepersoninjson) {
+                        tempdatatodelete.push(i);
+                    }
+                }
+            }
+
+            pertanyaan["satudua"].splice(pertanyaan12id, 1);
+
+            eliminationPeople();
+
+            if (pertanyaannowindex == 1) {
+                pertanyaan1dan2();
+            } else {
+                createQuestion();
+            }
+
+        } else if (pertanyaannowindex >= 3) {
+            if (jwb === "y") {
+                console.log("Jawaban: Iya");
+                for (let i = person.length - 1; i >= 0; i--) {
+
+                    let a = person[i].fakta;
+                    let x = person[randompersonindex].fakta[randompersondata];
+
+                    if (a.includes(x)) {
+                        console.log(`Mengamankan ${person[i].name}`);
+
+                        /*
+                        person = person.map(p => ({
+                            ...p,
+                            fakta: p.fakta.filter(f => f !== x)
+                        }));
+                        */
+
+                    } else {
+                        tempdatatodelete.push(i);
+                    }
+        
+                }
+
+            } else {
+                console.log("Jawaban: Tidak");
+                for (let i = person.length - 1; i >= 0; i--) {
+
+                    let a = person[i].fakta;
+                    let x = person[randompersonindex].fakta[randompersondata];
+
+                    if (a.includes(x)) {
+                        tempdatatodelete.push(i);
+                    } else {
+                        console.log(`Mengamankan ${person[i].name}`);
+                     
+                        /*
+                        person = person.map(p => ({
+                            ...p,
+                            fakta: p.fakta.filter(f => f !== x)
+                        }));
+                        */
+
+                    }
+
+                }
+
+            }
+
+            
+            eliminationPeople();
+
+        createQuestion();
+
+        }
+    }
+}
+
+function createQuestion() {
+    if (findingPerson()) {
+        return;
+    } else {
+        if (person.length === 0) {
+            console.log("Tidak ada orang yang cocok dengan jawaban!");
+            return;
+        }
+        
+        randompersonindex = getRandomInt(person.length);
+        
+        if (person[randompersonindex].fakta.length === 0) {
+            console.log(`Karakter ${person[randompersonindex].name} tidak memiliki fakta tersisa.`);
+            return;
+        }
+        
+        randompersondata = getRandomInt(person[randompersonindex].fakta.length);
+
+        var stringofquestuion = person[randompersonindex].fakta[randompersondata];
+
+        pertanyaannowstring = "Apakah karaktermu ini " + stringofquestuion + "?";
+
+        textquestion.textContent = pertanyaannowstring;
+
+        pertanyaannowindex += 1;
+        console.log(pertanyaannowstring);
+        console.log(person);
+    }
+}
+
+function eliminationPeople() {
+    if (tempdatatodelete.length != 0) {
+        person = person.filter((_, index) => !tempdatatodelete.includes(index));
+        console.log(person);
+
+        tempdatatodelete = [];
+
+        if (findingPerson()) {
+            console.log(`SAYA MEMIKIRKAN: ${person[0].name}`);
+
+            textquestion.textContent = `SAYA MEMIKIRKAN: ${person[0].name}`;
+        }
+    } 
+}
+
+function findingPerson() {
+    if (person.length <= 1) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function clickiya() {
+    filterJawaban("y");
+}
+
+function clicktidak() {
+    filterJawaban("n");
+}
