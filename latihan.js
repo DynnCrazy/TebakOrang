@@ -27,17 +27,25 @@ function formatData() {
 
         // Data yang dimasukkan ke dalam fakta
         var faktaIsDead = dataGlobal[i].status.isDead;
+        var faktaIsMarried = dataGlobal[i].status.isMarried;
         var faktaKindergarten = dataGlobal[i].school.kindergarten;
         var faktaElementaryschool = dataGlobal[i].school.elementaryschool;
         var faktaJuniorhighschool = dataGlobal[i].school.juniorhighschool;
         var faktaSeniorhighschool = dataGlobal[i].school.seniorhighschool;
         var faktaNamalengkap = dataGlobal[i].name;
         var faktaTempattanggallahir = dataGlobal[i].birthday;
+        var faktaKewarganegaraan = dataGlobal[i].contact.address.country;
 
         if (faktaIsDead == false) {
             thefactka.push("masih hidup");
         } else {
             thefactka.push("sudah meninggal dunia");
+        }
+
+        if (faktaIsMarried == false) {
+            thefactka.push("belum menikah");
+        } else {
+            thefactka.push("sudah menikah");
         }
 
         if (faktaTempattanggallahir != "" && faktaTempattanggallahir != null ) {
@@ -68,6 +76,14 @@ function formatData() {
             thefactka.push(`pernah bersekolah di ${faktaSeniorhighschool}`);
         }
 
+        if (dataGlobal[i].family.child.length != 0 ) {
+            thefactka.push(`mempunyai anak`);
+        }
+
+        if (faktaKewarganegaraan != "" && faktaKewarganegaraan != null ) {
+            thefactka.push(`memiliki kewarganegaraan ${faktaKewarganegaraan}`);
+        }
+
         if (faktaNamalengkap.includes("Putu")) {
             thefactka.push(`didalam namanya ada kata "Putu"`);
         } else if (faktaNamalengkap.includes("Wayan")) {
@@ -89,6 +105,15 @@ function formatData() {
         let hurufTerakhir = faktaNamalengkap.slice(-1);
         thefactka.push(`huruf terakhir dari nama lengkapnya adalah "${hurufTerakhir}"`);
 
+        let kataPertama = faktaNamalengkap.split(" ")[0];
+        if (kataPertama == "I") {
+            thefactka.push(`di nama lengkapnya awalannya ada "${kataPertama}"`);
+        } else if (kataPertama == "Ni") {
+            thefactka.push(`di nama lengkapnya awalannya ada "${kataPertama}"`);
+        } else {
+            thefactka.push(`di nama lengkapnya awalannya tidak ada "I" ataupun "Ni"`);
+        }
+
         person.push({
             "name": faktaNamalengkap,
             "gender": dataGlobal[i].gender,
@@ -100,7 +125,7 @@ function formatData() {
     console.log(person);
 }
 
-fetch("person.json")
+fetch("https://datadc.netlify.app/data/person/person.json")
     .then(response => response.json())
     .then(data => {
         dataGlobal = data.people;
@@ -130,6 +155,7 @@ var randompersonindex;
 var randompersondata;
 var tempdatatodelete = [];
 var pertanyaannowindex = 0;
+var isFind = false;
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -289,6 +315,11 @@ function eliminationPeople() {
         if (findingPerson()) {
             console.log(`SAYA MEMIKIRKAN: ${person[0].name}`);
 
+            document.getElementById("btn-iya").textContent = "Benar";
+            document.getElementById("btn-tidak").textContent = "Salah";
+
+            isFind = true;
+
             textquestion.textContent = `SAYA MEMIKIRKAN: ${person[0].name}`;
         }
     } 
@@ -303,9 +334,21 @@ function findingPerson() {
 }
 
 function clickiya() {
-    filterJawaban("y");
+    if (isFind == true) {
+        document.getElementById("btn-tidak").style.display = "none";
+        document.getElementById("btn-iya").textContent = "Coba Lagi";
+        isFind = "tryagain";
+    } else if (isFind == "tryagain") {
+        window.location.href = "index.html";
+    } else {
+        filterJawaban("y");
+    }
 }
 
 function clicktidak() {
-    filterJawaban("n");
+    if (isFind == true) {
+        alert("Jika karakter tebakanmu tidak ada, tidak ditemukan atau jawabannya salah, mohon untuk tambahkan data melalui link yang sudah disedikan di halaman paling bawah. Jangan lupakan juga cantumkan nama karakternya ya!");
+    } else {
+        filterJawaban("n");
+    }
 }
