@@ -5,7 +5,9 @@ var person = [
         "name": "Aditya",
         "gender": "Laki-Laki",
         "agama": "Hindu",
-        "fakta": ["Contoh objek", "Example"]
+        "image": "",
+        "fakta": ["Contoh objek", "Example"],
+        "kemungkinan": ["Contoh objek", "Example"]
     }
 ];
 
@@ -24,6 +26,8 @@ function formatData() {
     for(let i = 0; i < dataGlobal.length; i++) {
 
         var thefactka = [];
+        var thefactkm = [];
+        var thecharimg = null;
 
         // Data yang dimasukkan ke dalam fakta
         var faktaIsDead = dataGlobal[i].status.isDead;
@@ -36,15 +40,27 @@ function formatData() {
         var faktaTempattanggallahir = dataGlobal[i].birthday;
         var faktaKewarganegaraan = dataGlobal[i].contact.address.country;
 
+        if (dataGlobal[i].photo.length >= 1) {
+            thecharimg = dataGlobal[i].photo[0];
+        }
+
+        for(let thef = 0; thef < dataGlobal[i].otherfacts.public.length; thef++) {
+            var topushthedata = dataGlobal[i].otherfacts.public[thef];
+            thefactka.push(topushthedata.charAt(0).toLowerCase() + topushthedata.slice(1));
+        }
+
+        for(let thex = 0; thex < dataGlobal[i].otherfacts.possible.length; thex++) {
+            var topushthedata = dataGlobal[i].otherfacts.possible[thex];
+            thefactka.push(topushthedata.charAt(0).toLowerCase() + topushthedata.slice(1));
+        }
+
         if (faktaIsDead == false) {
             thefactka.push("masih hidup");
         } else {
             thefactka.push("sudah meninggal dunia");
         }
 
-        if (faktaIsMarried == false) {
-            thefactka.push("belum menikah");
-        } else {
+        if (faktaIsMarried == true) {
             thefactka.push("sudah menikah");
         }
 
@@ -98,8 +114,6 @@ function formatData() {
             thefactka.push(`didalam namanya ada kata "Ketut"`);
         } else if (faktaNamalengkap.includes("Nyoman")) {
             thefactka.push(`didalam namanya ada kata "Nyoman"`);
-        } else if (faktaNamalengkap.includes("Anak Agung")) {
-            thefactka.push(`didalam namanya ada kata "Anak Agung"`);
         }
 
         let hurufTerakhir = faktaNamalengkap.slice(-1);
@@ -110,15 +124,15 @@ function formatData() {
             thefactka.push(`di nama lengkapnya awalannya ada "${kataPertama}"`);
         } else if (kataPertama == "Ni") {
             thefactka.push(`di nama lengkapnya awalannya ada "${kataPertama}"`);
-        } else {
-            thefactka.push(`di nama lengkapnya awalannya tidak ada "I" ataupun "Ni"`);
         }
 
         person.push({
             "name": faktaNamalengkap,
             "gender": dataGlobal[i].gender,
             "agama": dataGlobal[i].religion,
-            "fakta": thefactka
+            "image": thecharimg,
+            "fakta": thefactka,
+            "kemungkinan": thefactkm
         });
     }
 
@@ -149,6 +163,8 @@ const pertanyaan = {
     ]
 };
 
+var pertanyaansebelumnya1 = "ABC";
+var pertanyaansebelumnya2 = "DEF";
 var pertanyaannowstring;
 var pertanyaan12id;
 var randompersonindex;
@@ -157,8 +173,18 @@ var tempdatatodelete = [];
 var pertanyaannowindex = 0;
 var isFind = false;
 
+var angkaAcakSebelumnya = 99;
+
 function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
+    if (max <= 1) return 0; // Pastikan nilai max lebih dari 1
+
+    let angkaAcak;
+    do {
+        angkaAcak = Math.floor(Math.random() * max);
+    } while (angkaAcak === angkaAcakSebelumnya && max > 1);
+
+    angkaAcakSebelumnya = angkaAcak;
+    return angkaAcak;
 }
 
 function pertanyaan1dan2() {
@@ -207,7 +233,11 @@ function filterJawaban(jwb) {
                 }
             }
 
-            pertanyaan["satudua"].splice(pertanyaan12id, 1);
+            if (pertanyaan["satudua"].length > 1) {
+                pertanyaan["satudua"].splice(pertanyaan12id, 1);
+            } else {
+                pertanyaan["satudua"] = [];
+            }
 
             eliminationPeople();
 
@@ -223,9 +253,10 @@ function filterJawaban(jwb) {
                 for (let i = person.length - 1; i >= 0; i--) {
 
                     let a = person[i].fakta;
+                    let b = person[i].kemungkinan;
                     let x = person[randompersonindex].fakta[randompersondata];
 
-                    if (a.includes(x)) {
+                    if (a.includes(x) || b.includes(x)) {
                         console.log(`Mengamankan ${person[i].name}`);
 
                         /*
@@ -246,9 +277,10 @@ function filterJawaban(jwb) {
                 for (let i = person.length - 1; i >= 0; i--) {
 
                     let a = person[i].fakta;
+                    let b = person[i].kemungkinan;
                     let x = person[randompersonindex].fakta[randompersondata];
 
-                    if (a.includes(x)) {
+                    if (a.includes(x) || b.includes(x)) {
                         tempdatatodelete.push(i);
                     } else {
                         console.log(`Mengamankan ${person[i].name}`);
@@ -297,6 +329,15 @@ function createQuestion() {
 
         pertanyaannowstring = "Apakah karaktermu ini " + stringofquestuion + "?";
 
+        
+        if (pertanyaansebelumnya1 === pertanyaannowstring) {
+            createQuestion();
+            return;
+        }
+
+        // pertanyaansebelumnya2 = pertanyaansebelumnya1;
+        pertanyaansebelumnya1 = pertanyaannowstring;
+
         textquestion.textContent = pertanyaannowstring;
 
         pertanyaannowindex += 1;
@@ -320,7 +361,11 @@ function eliminationPeople() {
 
             isFind = true;
 
-            textquestion.textContent = `SAYA MEMIKIRKAN: ${person[0].name}`;
+            if  (person[0].image != null) {
+                document.getElementById('forimg').innerHTML = `<img src="${person[0].image}" style="width: 200px; height: 200px; object-fit: cover; object-position: center 10%; border-radius: 6px" alt="Image">`;
+            }
+
+            textquestion.textContent = `SAYA MEMIKIRKAN:\n${person[0].name}`;
         }
     } 
 }
