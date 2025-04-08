@@ -21,17 +21,16 @@
             font-size: 20px;
         }
 
-        #btn-iya, #btn-tidak {
+        #btn-iya, #btn-tidak, #btn-tidaktau {
             background-color: #00a32b;
             outline: none;
             border: none;
             color: white;
             border-radius: 6px;
-            width: 100px;
-            height: 40px;
+            width: 250px;
+            height: 45px;
             cursor: pointer;
-            margin: 10px;
-            margin-top: 25px;
+            margin: 7px;
         }
     </style>
 </head>
@@ -39,8 +38,10 @@
     <div class="center">
         <p id="pertanyaan"></p>
         <div id="forimg"></div>
-        <button id="btn-iya" onclick="clickiya()">Iya</button>
-        <button id="btn-tidak" onclick="clicktidak()">Tidak</button>
+        <br>
+        <button id="btn-iya" onclick="clickiya()">Iya</button><br>
+        <button id="btn-tidak" onclick="clicktidak()">Tidak</button><br>
+        <button id="btn-tidaktau" onclick="clicktidaktau()">Tidak Tau</button>
     </div>
 
     <div class="center" style="position:absolute; bottom: 0; left: 0; right: 0; margin-bottom: 20px; font-size: 12px; text-align: center;">

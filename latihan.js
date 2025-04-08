@@ -51,7 +51,7 @@ function formatData() {
 
         for(let thex = 0; thex < dataGlobal[i].otherfacts.possible.length; thex++) {
             var topushthedata = dataGlobal[i].otherfacts.possible[thex];
-            thefactka.push(topushthedata.charAt(0).toLowerCase() + topushthedata.slice(1));
+            thefactkm.push(topushthedata.charAt(0).toLowerCase() + topushthedata.slice(1));
         }
 
         if (faktaIsDead == false) {
@@ -101,29 +101,29 @@ function formatData() {
         }
 
         if (faktaNamalengkap.includes("Putu")) {
-            thefactka.push(`didalam namanya ada kata "Putu"`);
+            thefactka.push(`didalam namanya ada kata Putu`);
         } else if (faktaNamalengkap.includes("Wayan")) {
-            thefactka.push(`didalam namanya ada kata "Wayan"`);
+            thefactka.push(`didalam namanya ada kata Wayan`);
         } else if (faktaNamalengkap.includes("Made")) {
-            thefactka.push(`didalam namanya ada kata "Made"`);
+            thefactka.push(`didalam namanya ada kata Made`);
         } else if (faktaNamalengkap.includes("Kadek")) {
-            thefactka.push(`didalam namanya ada kata "Kadek"`);
+            thefactka.push(`didalam namanya ada kata Kadek`);
         } else if (faktaNamalengkap.includes("Komang")) {
-            thefactka.push(`didalam namanya ada kata "Komang"`);
+            thefactka.push(`didalam namanya ada kata Komang`);
         } else if (faktaNamalengkap.includes("Ketut")) {
-            thefactka.push(`didalam namanya ada kata "Ketut"`);
+            thefactka.push(`didalam namanya ada kata Ketut`);
         } else if (faktaNamalengkap.includes("Nyoman")) {
-            thefactka.push(`didalam namanya ada kata "Nyoman"`);
+            thefactka.push(`didalam namanya ada kata Nyoman`);
         }
 
         let hurufTerakhir = faktaNamalengkap.slice(-1);
-        thefactka.push(`huruf terakhir dari nama lengkapnya adalah "${hurufTerakhir}"`);
+        thefactka.push(`huruf terakhir dari nama lengkapnya adalah ${hurufTerakhir}`);
 
         let kataPertama = faktaNamalengkap.split(" ")[0];
         if (kataPertama == "I") {
-            thefactka.push(`di nama lengkapnya awalannya ada "${kataPertama}"`);
+            thefactka.push(`di nama lengkapnya awalannya ada ${kataPertama}`);
         } else if (kataPertama == "Ni") {
-            thefactka.push(`di nama lengkapnya awalannya ada "${kataPertama}"`);
+            thefactka.push(`di nama lengkapnya awalannya ada ${kataPertama}`);
         }
 
         person.push({
@@ -139,7 +139,7 @@ function formatData() {
     console.log(person);
 }
 
-fetch("https://datadc.netlify.app/data/person/person.json")
+fetch("person.json")
     .then(response => response.json())
     .then(data => {
         dataGlobal = data.people;
@@ -172,8 +172,13 @@ var randompersondata;
 var tempdatatodelete = [];
 var pertanyaannowindex = 0;
 var isFind = false;
+var bolehKlikTombol = false;
 
 var angkaAcakSebelumnya = 99;
+
+
+// ====================================================================================================
+
 
 function getRandomInt(max) {
     if (max <= 1) return 0; // Pastikan nilai max lebih dari 1
@@ -198,12 +203,15 @@ function pertanyaan1dan2() {
 
     pertanyaannowindex += 1;
     console.log(pertanyaannowstring);
+    bolehKlikTombol = true;
 }
 
 function filterJawaban(jwb) {
     if (findingPerson()) {
         return;
     } else {
+        bolehKlikTombol = false;
+
         if (pertanyaannowindex < 3) {
 
             if (jwb === "y") {
@@ -250,14 +258,22 @@ function filterJawaban(jwb) {
         } else if (pertanyaannowindex >= 3) {
             if (jwb === "y") {
                 console.log("Jawaban: Iya");
+                var x = person[randompersonindex].fakta[randompersondata];
+                
                 for (let i = person.length - 1; i >= 0; i--) {
 
-                    let a = person[i].fakta;
-                    let b = person[i].kemungkinan;
-                    let x = person[randompersonindex].fakta[randompersondata];
+                    var a = person[i].fakta;
+                    var b = person[i].kemungkinan;
 
                     if (a.includes(x) || b.includes(x)) {
-                        console.log(`Mengamankan ${person[i].name}`);
+                        let indexs = a.indexOf(x);
+                        if (indexs !== -1) {
+                            a.splice(indexs, 1);
+                        }
+
+                        if (person[i].fakta.length == 0 || person[i].fakta.length == undefined) {
+                            person[i].fakta.push(`Namanya adalah ${person[i].name}`);
+                        }
 
                         /*
                         person = person.map(p => ({
@@ -274,17 +290,26 @@ function filterJawaban(jwb) {
 
             } else {
                 console.log("Jawaban: Tidak");
+                var x = person[randompersonindex].fakta[randompersondata];
+
                 for (let i = person.length - 1; i >= 0; i--) {
 
-                    let a = person[i].fakta;
-                    let b = person[i].kemungkinan;
-                    let x = person[randompersonindex].fakta[randompersondata];
+                    var a = person[i].fakta;
+                    var b = person[i].kemungkinan;
 
                     if (a.includes(x) || b.includes(x)) {
                         tempdatatodelete.push(i);
+
                     } else {
-                        console.log(`Mengamankan ${person[i].name}`);
-                     
+                        let indexs = a.indexOf(x);
+                        if (indexs !== -1) {
+                            a.splice(indexs, 1);
+                        }
+
+                        if (person[i].fakta.length == 0 || person[i].fakta.length == undefined) {
+                            person[i].fakta.push(`Namanya adalah ${person[i].name}`);
+                        }
+
                         /*
                         person = person.map(p => ({
                             ...p,
@@ -299,15 +324,17 @@ function filterJawaban(jwb) {
             }
 
             
-            eliminationPeople();
-
+        eliminationPeople();
         createQuestion();
 
         }
     }
 }
 
+
 function createQuestion() {
+    console.log(person);
+
     if (findingPerson()) {
         return;
     } else {
@@ -318,14 +345,17 @@ function createQuestion() {
         
         randompersonindex = getRandomInt(person.length);
         
-        if (person[randompersonindex].fakta.length === 0) {
+        if (person[randompersonindex].fakta.length == 0) {
             console.log(`Karakter ${person[randompersonindex].name} tidak memiliki fakta tersisa.`);
-            return;
+            person[randompersonindex].fakta.push(`Namanya adalah ${person[randompersonindex].name}`);
         }
         
-        randompersondata = getRandomInt(person[randompersonindex].fakta.length);
+        randompersondata = 0;
 
         var stringofquestuion = person[randompersonindex].fakta[randompersondata];
+
+        console.log(`RANDOMPINDEX: ${randompersonindex} && RANDOMPERSONDATA: ${randompersondata}`);
+        console.log(person[randompersonindex].name);
 
         pertanyaannowstring = "Apakah karaktermu ini " + stringofquestuion + "?";
 
@@ -342,30 +372,40 @@ function createQuestion() {
 
         pertanyaannowindex += 1;
         console.log(pertanyaannowstring);
-        console.log(person);
     }
+
+    bolehKlikTombol = true;
 }
 
 function eliminationPeople() {
     if (tempdatatodelete.length != 0) {
         person = person.filter((_, index) => !tempdatatodelete.includes(index));
-        console.log(person);
+        console.log(`Temp Delete: ${tempdatatodelete}`);
 
         tempdatatodelete = [];
 
         if (findingPerson()) {
-            console.log(`SAYA MEMIKIRKAN: ${person[0].name}`);
+            if (person.length == 1) {
+                document.getElementById("btn-tidaktau").style.display = 'none';
+                document.getElementById("btn-iya").textContent = "Benar";
+                document.getElementById("btn-tidak").textContent = "Salah";
 
-            document.getElementById("btn-iya").textContent = "Benar";
-            document.getElementById("btn-tidak").textContent = "Salah";
+                isFind = true;
 
-            isFind = true;
+                if  (person[0].image != null) {
+                    document.getElementById('forimg').innerHTML = `<img src="${person[0].image}" style="width: 200px; height: 200px; object-fit: cover; object-position: center 10%; border-radius: 6px" alt="Image">`;
+                }
 
-            if  (person[0].image != null) {
-                document.getElementById('forimg').innerHTML = `<img src="${person[0].image}" style="width: 200px; height: 200px; object-fit: cover; object-position: center 10%; border-radius: 6px" alt="Image">`;
+                textquestion.innerHTML = `SAYA MEMIKIRKAN:<br>${person[0].name}`;
+            } else {
+                document.getElementById("btn-tidaktau").style.display = 'none';
+                document.getElementById("btn-iya").textContent = 'Coba Lagi!';
+                document.getElementById("btn-tidak").style.display = 'none';
+
+                isFind = true;
+
+                textquestion.innerHTML = `KARAKTER TIDAK DIKENAL!`;   
             }
-
-            textquestion.textContent = `SAYA MEMIKIRKAN:\n${person[0].name}`;
         }
     } 
 }
@@ -379,21 +419,41 @@ function findingPerson() {
 }
 
 function clickiya() {
-    if (isFind == true) {
-        document.getElementById("btn-tidak").style.display = "none";
-        document.getElementById("btn-iya").textContent = "Coba Lagi";
-        isFind = "tryagain";
-    } else if (isFind == "tryagain") {
-        window.location.href = "index.html";
+    if (bolehKlikTombol) {
+        if (isFind == true) {
+            document.getElementById("btn-tidak").style.display = "none";
+            document.getElementById("btn-iya").textContent = "Coba Lagi";
+            isFind = "tryagain";
+        } else if (isFind == "tryagain") {
+            window.location.href = "index.html";
+        } else {
+            filterJawaban("y");
+        }
     } else {
-        filterJawaban("y");
+        return;
     }
 }
 
 function clicktidak() {
-    if (isFind == true) {
-        alert("Jika karakter tebakanmu tidak ada, tidak ditemukan atau jawabannya salah, mohon untuk tambahkan data melalui link yang sudah disedikan di halaman paling bawah. Jangan lupakan juga cantumkan nama karakternya ya!");
+    if (bolehKlikTombol) {
+        if (isFind == true) {
+            alert("Jika karakter tebakanmu tidak ada, tidak ditemukan atau jawabannya salah, mohon untuk tambahkan data melalui link yang sudah disedikan di halaman paling bawah. Jangan lupakan juga cantumkan nama karakternya ya!");
+        } else {
+            filterJawaban("n");
+        }
     } else {
-        filterJawaban("n");
+        return;
+    }
+}
+
+function clicktidaktau() {
+    if (bolehKlikTombol) {
+        if (pertanyaannowindex < 3) {
+            pertanyaan1dan2();
+        } else {
+            createQuestion();
+        }
+    } else {
+        return;
     }
 }
