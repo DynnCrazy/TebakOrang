@@ -139,7 +139,7 @@ function formatData() {
     console.log(person);
 }
 
-fetch("person.json")
+fetch("https://datadc.netlify.app/data/person/person.json")
     .then(response => response.json())
     .then(data => {
         dataGlobal = data.people;
@@ -397,6 +397,7 @@ function eliminationPeople() {
                 }
 
                 textquestion.innerHTML = `SAYA MEMIKIRKAN:<br>${person[0].name}`;
+                bolehKlikTombol = true;
             } else {
                 document.getElementById("btn-tidaktau").style.display = 'none';
                 document.getElementById("btn-iya").textContent = 'Coba Lagi!';
@@ -405,6 +406,7 @@ function eliminationPeople() {
                 isFind = true;
 
                 textquestion.innerHTML = `KARAKTER TIDAK DIKENAL!`;   
+                bolehKlikTombol = true;
             }
         }
     } 
