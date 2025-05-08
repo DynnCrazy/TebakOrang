@@ -393,7 +393,7 @@ function eliminationPeople() {
                 isFind = true;
 
                 if  (person[0].image != null) {
-                    document.getElementById('forimg').innerHTML = `<img src="${person[0].image}" style="width: 200px; height: 200px; object-fit: cover; object-position: center 10%; border-radius: 6px" alt="Image">`;
+                    document.getElementById('forimg').innerHTML = `<img src="${person[0].image}" style="width: 150px; height: 150px; object-fit: cover; object-position: center 10%; border-radius: 6px" alt="Image">`;
                 }
 
                 textquestion.innerHTML = `SAYA MEMIKIRKAN:<br>${person[0].name}`;
