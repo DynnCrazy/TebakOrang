@@ -139,7 +139,7 @@ function formatData() {
     console.log(person);
 }
 
-fetch("https://datadc.netlify.app/data/person/person.json")
+fetch("https://datadc.netlify.app/data/person/data.json")
     .then(response => response.json())
     .then(data => {
         dataGlobal = data.people;
